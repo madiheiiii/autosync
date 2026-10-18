@@ -1,10 +1,9 @@
-package com.autosync.autosync;
+package com.autosync;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication
 public class AutosyncApplication {
 
 	public static void main(String[] args) {
