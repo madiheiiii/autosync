@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.autosync.model.Vehicle;
 import com.autosync.service.VehicleService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/vehicles")
 public class VehicleController {
@@ -38,7 +40,7 @@ public class VehicleController {
         ));
     }
     @PostMapping
-    public Vehicle createVehicle(@RequestBody Vehicle vehicle) {
+    public Vehicle createVehicle(@Valid @RequestBody Vehicle vehicle) {
       return vehicleService.createVehicle(vehicle);
     }
 }

@@ -3,6 +3,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Vehicle {
@@ -11,9 +14,17 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String vin;
+
+    @NotBlank
     private String make;
+
+    @NotBlank
     private String model;
+
+    @Min(1886)
+    @Max(2100)
     private Integer year;
 
     public Vehicle() {
