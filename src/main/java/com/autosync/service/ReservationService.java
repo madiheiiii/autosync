@@ -1,6 +1,13 @@
 
 package com.autosync.service;
 
+import java.util.List;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.autosync.model.Customer;
 import com.autosync.model.Reservation;
 import com.autosync.model.ReservationStatus;
@@ -8,12 +15,6 @@ import com.autosync.model.Vehicle;
 import com.autosync.repository.CustomerRepository;
 import com.autosync.repository.ReservationRepository;
 import com.autosync.repository.VehicleRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class ReservationService {
@@ -52,7 +53,15 @@ public class ReservationService {
 
         Reservation reservation = new Reservation(customer, vehicle);
 
-        return reservationRepository.save(reservation);
+        try {
+            return reservationRepository.saveAndFlush(reservation);
+        } catch (DataIntegrityViolationException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Vehicle already has an active reservation",
+                    exception
+            );
+        }
     }
 
     public Reservation getReservationById(Long id) {
