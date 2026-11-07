@@ -1,5 +1,5 @@
 
-package com.autosync.service;
+package com.autosync.service.constraint;
 
 import java.util.List;
 
@@ -8,13 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.autosync.model.Customer;
-import com.autosync.model.Reservation;
-import com.autosync.model.ReservationStatus;
-import com.autosync.model.Vehicle;
-import com.autosync.repository.CustomerRepository;
-import com.autosync.repository.ReservationRepository;
-import com.autosync.repository.VehicleRepository;
+import com.autosync.model.constraint.Customer;
+import com.autosync.model.constraint.Reservation;
+import com.autosync.model.constraint.ReservationStatus;
+import com.autosync.model.constraint.Vehicle;
+import com.autosync.repository.constraint.CustomerRepository;
+import com.autosync.repository.constraint.ReservationRepository;
+import com.autosync.repository.constraint.VehicleRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReservationService {
@@ -32,6 +33,7 @@ public class ReservationService {
         this.vehicleRepository = vehicleRepository;
     }
 
+    @Transactional
     public Reservation createReservation(Long customerId, Long vehicleId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResponseStatusException(

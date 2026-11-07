@@ -1,16 +1,22 @@
 
-package com.autosync.controller;
-
-import com.autosync.model.Reservation;
-import com.autosync.service.ReservationService;
-
-import org.springframework.web.bind.annotation.*;
+package com.autosync.controller.constraint;
 
 import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.autosync.model.constraint.Reservation;
+import com.autosync.service.constraint.ReservationService;
 //import java.util.Map;
 
 @RestController
-@RequestMapping("/reservations")
+@RequestMapping("constraint/reservations")
 public class ReservationController {
 
     private final ReservationService reservationService;

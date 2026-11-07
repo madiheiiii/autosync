@@ -1,5 +1,5 @@
 
-package com.autosync.model;
+package com.autosync.model.constraint;
 
 public enum ReservationStatus {
     ACTIVE,

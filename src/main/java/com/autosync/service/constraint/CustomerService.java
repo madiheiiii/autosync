@@ -1,9 +1,9 @@
-package com.autosync.service;
+package com.autosync.service.constraint;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import com.autosync.model.Customer;
-import com.autosync.repository.CustomerRepository;
+import com.autosync.model.constraint.Customer;
+import com.autosync.repository.constraint.CustomerRepository;
 
 @Service
 public class CustomerService {

@@ -13,10 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import com.autosync.model.Customer;
-import com.autosync.model.Vehicle;
-import com.autosync.repository.CustomerRepository;
-import com.autosync.repository.VehicleRepository;
+import com.autosync.model.constraint.Customer;
+import com.autosync.model.constraint.Vehicle;
+import com.autosync.repository.constraint.CustomerRepository;
+import com.autosync.repository.constraint.VehicleRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

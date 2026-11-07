@@ -1,14 +1,16 @@
 
-package com.autosync.model;
+package com.autosync.model.constraint;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-@Entity
+@Entity(name = "ConstraintCustomer")
+@Table(name = "customer", schema = "constraint")
 public class Customer {
 
     @Id

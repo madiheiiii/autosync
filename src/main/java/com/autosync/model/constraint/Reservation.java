@@ -1,10 +1,22 @@
 
-package com.autosync.model;
+package com.autosync.model.constraint;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+
+@Entity(name = "ConstraintReservation")
+@Table(name="reservation", schema="constraint")
 public class Reservation {
 
     @Id

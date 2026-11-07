@@ -1,11 +1,12 @@
 
-package com.autosync.repository;
-
-import com.autosync.model.Reservation;
-import com.autosync.model.ReservationStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
+package com.autosync.repository.constraint;
 
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.autosync.model.constraint.Reservation;
+import com.autosync.model.constraint.ReservationStatus;
 
 public interface ReservationRepository
         extends JpaRepository<Reservation, Long> {

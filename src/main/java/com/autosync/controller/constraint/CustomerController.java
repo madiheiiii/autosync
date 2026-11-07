@@ -1,4 +1,4 @@
-package com.autosync.controller;
+package com.autosync.controller.constraint;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.autosync.model.Customer;
-import com.autosync.service.CustomerService;
+import com.autosync.model.constraint.Customer;
+import com.autosync.service.constraint.CustomerService;
 
 import jakarta.validation.Valid;
 

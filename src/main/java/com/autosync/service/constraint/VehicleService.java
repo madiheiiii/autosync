@@ -1,13 +1,13 @@
 
-package com.autosync.service;
+package com.autosync.service.constraint;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.autosync.model.Vehicle;
-import com.autosync.repository.VehicleRepository;
+import com.autosync.model.constraint.Vehicle;
+import com.autosync.repository.constraint.VehicleRepository;
 
 @Service
 public class VehicleService {

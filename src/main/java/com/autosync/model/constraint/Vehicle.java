@@ -1,13 +1,15 @@
-package com.autosync.model;
+package com.autosync.model.constraint;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-@Entity
+@Entity(name = "ConstraintVehicle")
+@Table(name = "vehicle", schema = "constraint")
 public class Vehicle {
 
     @Id
@@ -23,11 +25,18 @@ public class Vehicle {
     @NotBlank
     private String model;
 
-    @Min(1886)
+    @Min(1880)
     @Max(2100)
     private Integer year;
 
     public Vehicle() {
+    }
+
+    public Vehicle(String vin, String make, String model, Integer year) {
+        this.vin = vin;
+        this.make = make;
+        this.model = model;
+        this.year = year;
     }
 
     public Long getId() {

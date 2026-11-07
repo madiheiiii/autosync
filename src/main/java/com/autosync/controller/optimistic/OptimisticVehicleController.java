@@ -1,5 +1,5 @@
 
-package com.autosync.controller;
+package com.autosync.controller.optimistic;
 
 import java.util.List;
 
@@ -12,35 +12,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.autosync.model.Vehicle;
-import com.autosync.service.VehicleService;
+import com.autosync.model.optimistic.OptimisticVehicle;
+import com.autosync.service.optimistic.OptimisticVehicleService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/vehicles")
-public class VehicleController {
+@RequestMapping("optimistic/vehicles")
+public class OptimisticVehicleController {
 
-    private final VehicleService vehicleService;
+    private final OptimisticVehicleService vehicleService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public OptimisticVehicleController(OptimisticVehicleService vehicleService) {
         this.vehicleService = vehicleService;
     }
 
     @GetMapping
-    public List<Vehicle> getAllVehicles() {
+    public List<OptimisticVehicle> getAllVehicles() {
         return vehicleService.getAllVehicles();
     }
 
     @GetMapping ("/{id}")
-    public Vehicle getVehicleById(@PathVariable Long id){
+    public OptimisticVehicle getVehicleById(@PathVariable Long id){
         return vehicleService.getAllVehicles(id)
                 .orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND, "Vehicle not found"
         ));
     }
     @PostMapping
-    public Vehicle createVehicle(@Valid @RequestBody Vehicle vehicle) {
+    public OptimisticVehicle createVehicle(@Valid @RequestBody OptimisticVehicle vehicle) {
       return vehicleService.createVehicle(vehicle);
     }
 }
