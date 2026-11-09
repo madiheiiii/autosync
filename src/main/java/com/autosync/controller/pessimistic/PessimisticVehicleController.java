@@ -1,0 +1,44 @@
+package com.autosync.controller.pessimistic;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import com.autosync.model.pessimistic.PessimisticVehicle;
+import com.autosync.service.pessimistic.PessimisticVehicleService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/pessimistic/vehicles")
+public class PessimisticVehicleController {
+
+    private final PessimisticVehicleService vehicleService;
+
+    public PessimisticVehicleController(PessimisticVehicleService vehicleService) {
+        this.vehicleService = vehicleService;
+    }
+
+    @GetMapping
+    public List<PessimisticVehicle> getAllVehicles() {
+        return vehicleService.getAllVehicles();
+    }
+
+    @GetMapping ("/{id}")
+    public PessimisticVehicle getVehicleById(@PathVariable Long id){
+        return vehicleService.getAllVehicles(id)
+                .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Vehicle not found"
+        ));
+    }
+    @PostMapping
+    public PessimisticVehicle createVehicle(@Valid @RequestBody PessimisticVehicle vehicle) {
+      return vehicleService.createVehicle(vehicle);
+    }
+}

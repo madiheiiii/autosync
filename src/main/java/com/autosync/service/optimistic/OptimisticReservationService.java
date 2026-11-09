@@ -1,7 +1,6 @@
-
 package com.autosync.service.optimistic;
 import java.util.List;
-import org.springframework.dao.DataIntegrityViolationException;
+//import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,9 +12,12 @@ import com.autosync.repository.optimistic.OptimisticCustomerRepository;
 import com.autosync.repository.optimistic.OptimisticReservationRepository;
 import com.autosync.repository.optimistic.OptimisticVehicleRepository;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class OptimisticReservationService {
+
 
     private final OptimisticReservationRepository reservationRepository;
     private final OptimisticCustomerRepository customerRepository;
@@ -29,6 +31,8 @@ public class OptimisticReservationService {
         this.customerRepository = customerRepository;
         this.vehicleRepository = vehicleRepository;
     }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public OptimisticReservation createReservation(Long customerId, Long vehicleId) {
@@ -39,6 +43,7 @@ public class OptimisticReservationService {
         OptimisticVehicle vehicle = vehicleRepository.findForReservation(vehicleId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Vehicle not found"));
+                        
 
         List<OptimisticReservation> activeReservations =
                 reservationRepository.findByVehicleIdAndStatus(
@@ -51,16 +56,7 @@ public class OptimisticReservationService {
         }
 
         OptimisticReservation reservation = new OptimisticReservation(customer, vehicle);
-
-        try {
-            return reservationRepository.saveAndFlush(reservation);
-        } catch (DataIntegrityViolationException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Vehicle already has an active reservation",
-                    exception
-            );
-        }
+        return reservationRepository.saveAndFlush(reservation);
     }
 
     public OptimisticReservation getReservationById(Long id) {
@@ -81,26 +77,49 @@ public class OptimisticReservationService {
         return reservationRepository.findByCustomerId(customerId);
     }
 
+    @Transactional
     public OptimisticReservation cancelReservation(Long id) {
         OptimisticReservation reservation = getReservationById(id);
+
+        Long vehicleId = reservation.getVehicle().getId();
+
+        vehicleRepository.findForReservation(vehicleId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Vehicle not found"));
+
+        entityManager.refresh(reservation);
 
         if (reservation.getStatus() == OptimisticReservationStatus.CANCELLED) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Reservation is already cancelled");
         }
+
         reservation.setStatus(OptimisticReservationStatus.CANCELLED);
 
         return reservationRepository.save(reservation);
     }
 
-        public OptimisticReservation activeReservation(Long id) {
+    @Transactional
+    public OptimisticReservation activeReservation(Long id) {
         OptimisticReservation reservation = getReservationById(id);
 
-        if (reservation.getStatus() == OptimisticReservationStatus.ACTIVE) {
+        Long vehicleId = reservation.getVehicle().getId();
+
+        vehicleRepository.findForReservation(vehicleId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Vehicle not found"));
+
+        entityManager.refresh(reservation);
+
+        List<OptimisticReservation> activeReservations =
+                reservationRepository.findByVehicleIdAndStatus(
+                        vehicleId, OptimisticReservationStatus.ACTIVE);
+
+        if (!activeReservations.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Reservation is already active");
+                    "Vehicle already has an active reservation");
         }
 
         reservation.setStatus(OptimisticReservationStatus.ACTIVE);

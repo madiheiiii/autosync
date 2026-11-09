@@ -183,7 +183,7 @@ VALUES ('Bob', 'bob@example.com');
 INSERT INTO optimistic.vehicle (vin, make, model, year, version)
 OUTPUT INSERTED.id
 VALUES ('TEST-OPT-001', 'Toyota', 'Corolla', 2024, 0);
-*/
+
 SELECT * FROM optimistic.customer
 Select * FROM optimistic.reservation
 select * from optimistic.vehicle
@@ -203,3 +203,25 @@ GROUP BY vehicle_id;
 INSERT INTO optimistic.vehicle (vin, make, model, year, version)
 OUTPUT INSERTED.id
 VALUES ('TEST-OPT-010', 'Mazda', 'one', 2024, 0);
+
+INSERT INTO pessimistic.customer (name, email)
+OUTPUT INSERTED.id
+VALUES ('Alice', 'alice.pess@example.com');
+
+INSERT INTO pessimistic.customer (name, email)
+OUTPUT INSERTED.id
+VALUES ('Bob', 'bob.pess@example.com');
+
+INSERT INTO pessimistic.vehicle (vin, make, model, year)
+OUTPUT INSERTED.id
+VALUES ('TEST-PESS-008', 'Toyota', 'Corolla', 2024, 0);
+
+
+SELECT id, customer_id, vehicle_id, status
+FROM pessimistic.reservation
+WHERE vehicle_id = 4;
+*/
+   BEGIN TRAN;
+   SELECT * FROM pessimistic.vehicle WITH (UPDLOCK, ROWLOCK) WHERE id = 8;
+   ROLLBACK;
+   -- leave this open, don't commit
