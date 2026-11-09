@@ -199,8 +199,7 @@ SELECT vehicle_id, COUNT(*) AS active_reservations
 FROM optimistic.reservation
 WHERE status = 'ACTIVE'
 GROUP BY vehicle_id;
-/*
+
 INSERT INTO optimistic.vehicle (vin, make, model, year, version)
 OUTPUT INSERTED.id
-VALUES ('TEST-OPT-0078', 'Mazda', 'one', 2024, 0);
-*/
+VALUES ('TEST-OPT-010', 'Mazda', 'one', 2024, 0);
