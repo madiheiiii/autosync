@@ -1,4 +1,5 @@
 package com.autosync.controller.constraint;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -21,24 +22,24 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    public CustomerController(CustomerService customerService){
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
-    @GetMapping 
-    public List<Customer> getAllCustomers(){
+    @GetMapping
+    public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping ("/{id}")
-    public Customer getCustomersById(@PathVariable long id){
-        return customerService.getAllCustomers(id) .orElseThrow(() -> new ResponseStatusException
-        (HttpStatus.NOT_FOUND, "Customer not found."));
+    @GetMapping("/{id}")
+    public Customer getCustomersById(@PathVariable long id) {
+        return customerService.getAllCustomers(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found."));
     }
 
     @PostMapping
-    public Customer createCustomer(@Valid @RequestBody Customer customer){
+    public Customer createCustomer(@Valid @RequestBody Customer customer) {
         return customerService.createCustomer(customer);
     }
-    
+
 }

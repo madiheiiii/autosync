@@ -1,4 +1,5 @@
 package com.autosync.service.optimistic;
+
 import java.util.List;
 //import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,6 @@ import jakarta.persistence.PersistenceContext;
 @Service
 public class OptimisticReservationService {
 
-
     private final OptimisticReservationRepository reservationRepository;
     private final OptimisticCustomerRepository customerRepository;
     private final OptimisticVehicleRepository vehicleRepository;
@@ -31,6 +31,7 @@ public class OptimisticReservationService {
         this.customerRepository = customerRepository;
         this.vehicleRepository = vehicleRepository;
     }
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -43,11 +44,9 @@ public class OptimisticReservationService {
         OptimisticVehicle vehicle = vehicleRepository.findForReservation(vehicleId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Vehicle not found"));
-                        
 
-        List<OptimisticReservation> activeReservations =
-                reservationRepository.findByVehicleIdAndStatus(
-                        vehicleId, OptimisticReservationStatus.ACTIVE);
+        List<OptimisticReservation> activeReservations = reservationRepository.findByVehicleIdAndStatus(
+                vehicleId, OptimisticReservationStatus.ACTIVE);
 
         if (!activeReservations.isEmpty()) {
             throw new ResponseStatusException(
@@ -64,6 +63,7 @@ public class OptimisticReservationService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Reservation not found"));
     }
+
     public List<OptimisticReservation> getAllReservations() {
         return reservationRepository.findAll();
     }
@@ -112,9 +112,8 @@ public class OptimisticReservationService {
 
         entityManager.refresh(reservation);
 
-        List<OptimisticReservation> activeReservations =
-                reservationRepository.findByVehicleIdAndStatus(
-                        vehicleId, OptimisticReservationStatus.ACTIVE);
+        List<OptimisticReservation> activeReservations = reservationRepository.findByVehicleIdAndStatus(
+                vehicleId, OptimisticReservationStatus.ACTIVE);
 
         if (!activeReservations.isEmpty()) {
             throw new ResponseStatusException(

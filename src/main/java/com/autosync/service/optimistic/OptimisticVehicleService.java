@@ -1,4 +1,5 @@
 package com.autosync.service.optimistic;
+
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.autosync.model.optimistic.OptimisticVehicle;
@@ -9,19 +10,20 @@ import java.util.Optional;
 public class OptimisticVehicleService {
     private final OptimisticVehicleRepository vehicleRepository;
 
-    public OptimisticVehicleService(OptimisticVehicleRepository vehicleRepository){
+    public OptimisticVehicleService(OptimisticVehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
     }
 
-    public List<OptimisticVehicle> getAllVehicles(){
+    public List<OptimisticVehicle> getAllVehicles() {
         return vehicleRepository.findAll();
     }
 
-    public Optional<OptimisticVehicle> getAllVehicles(Long id){
+    public Optional<OptimisticVehicle> getAllVehicles(Long id) {
         return vehicleRepository.findById(id);
     }
-    public OptimisticVehicle createVehicle(OptimisticVehicle vehicle){
+
+    public OptimisticVehicle createVehicle(OptimisticVehicle vehicle) {
         return vehicleRepository.save(vehicle);
     }
-    
+
 }

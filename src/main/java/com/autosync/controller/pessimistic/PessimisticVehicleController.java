@@ -30,15 +30,15 @@ public class PessimisticVehicleController {
         return vehicleService.getAllVehicles();
     }
 
-    @GetMapping ("/{id}")
-    public PessimisticVehicle getVehicleById(@PathVariable Long id){
+    @GetMapping("/{id}")
+    public PessimisticVehicle getVehicleById(@PathVariable Long id) {
         return vehicleService.getAllVehicles(id)
                 .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, "Vehicle not found"
-        ));
+                        HttpStatus.NOT_FOUND, "Vehicle not found"));
     }
+
     @PostMapping
     public PessimisticVehicle createVehicle(@Valid @RequestBody PessimisticVehicle vehicle) {
-      return vehicleService.createVehicle(vehicle);
+        return vehicleService.createVehicle(vehicle);
     }
 }

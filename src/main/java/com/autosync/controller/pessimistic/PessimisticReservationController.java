@@ -1,4 +1,5 @@
 package com.autosync.controller.pessimistic;
+
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public class PessimisticReservationController {
 
     public record CreateReservationRequest(
             Long customerId,
-            Long vehicleId
-    ) {}
+            Long vehicleId) {
+    }
 
     @PostMapping
     public PessimisticReservation createReservation(
@@ -45,6 +46,7 @@ public class PessimisticReservationController {
     public PessimisticReservation getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
+
     @GetMapping
     public List<PessimisticReservation> getAllReservations() {
         return reservationService.getAllReservations();
@@ -60,21 +62,21 @@ public class PessimisticReservationController {
     public PessimisticReservation cancelReservation(@PathVariable Long id) {
         return reservationService.cancelReservation(id);
     }
+
     @PatchMapping("/{id}/active")
     public PessimisticReservation activeReservation(@PathVariable Long id) {
         return reservationService.activeReservation(id);
     }
 
-@ExceptionHandler(PessimisticLockingFailureException.class)
-public ResponseEntity<Map<String, String>> handlePessimisticConflict(
-        PessimisticLockingFailureException exception) {
+    @ExceptionHandler(PessimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, String>> handlePessimisticConflict(
+            PessimisticLockingFailureException exception) {
 
-    System.out.println("PESSIMISTIC CONFLICT: " + exception.getMessage());
+        System.out.println("PESSIMISTIC CONFLICT: " + exception.getMessage());
 
-    return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(Map.of(
-                    "message",
-                    "Could not acquire the vehicle lock. Please try again."
-            ));
-}
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "message",
+                        "Could not acquire the vehicle lock. Please try again."));
+    }
 }

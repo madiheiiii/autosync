@@ -27,8 +27,8 @@ public class ReservationController {
 
     public record CreateReservationRequest(
             Long customerId,
-            Long vehicleId
-    ) {}
+            Long vehicleId) {
+    }
 
     @PostMapping
     public Reservation createReservation(
@@ -42,6 +42,7 @@ public class ReservationController {
     public Reservation getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
+
     @GetMapping
     public List<Reservation> getAllReservations() {
         return reservationService.getAllReservations();
@@ -57,6 +58,7 @@ public class ReservationController {
     public Reservation cancelReservation(@PathVariable Long id) {
         return reservationService.cancelReservation(id);
     }
+
     @PatchMapping("/{id}/active")
     public Reservation activeReservation(@PathVariable Long id) {
         return reservationService.activeReservation(id);

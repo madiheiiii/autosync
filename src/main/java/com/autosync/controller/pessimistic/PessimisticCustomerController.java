@@ -1,4 +1,5 @@
 package com.autosync.controller.pessimistic;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -20,24 +21,24 @@ public class PessimisticCustomerController {
 
     private final PessimisticCustomerService customerService;
 
-    public PessimisticCustomerController(PessimisticCustomerService customerService){
+    public PessimisticCustomerController(PessimisticCustomerService customerService) {
         this.customerService = customerService;
     }
 
-    @GetMapping 
-    public List<PessimisticCustomer> getAllCustomers(){
+    @GetMapping
+    public List<PessimisticCustomer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping ("/{id}")
-    public PessimisticCustomer getCustomersById(@PathVariable long id){
-        return customerService.getAllCustomers(id) .orElseThrow(() -> new ResponseStatusException
-        (HttpStatus.NOT_FOUND, "Customer not found."));
+    @GetMapping("/{id}")
+    public PessimisticCustomer getCustomersById(@PathVariable long id) {
+        return customerService.getAllCustomers(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found."));
     }
 
     @PostMapping
-    public PessimisticCustomer createCustomer(@Valid @RequestBody PessimisticCustomer customer){
+    public PessimisticCustomer createCustomer(@Valid @RequestBody PessimisticCustomer customer) {
         return customerService.createCustomer(customer);
     }
-    
+
 }

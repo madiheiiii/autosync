@@ -9,14 +9,13 @@ import com.autosync.model.constraint.Reservation;
 import com.autosync.model.constraint.ReservationStatus;
 
 public interface ReservationRepository
-        extends JpaRepository<Reservation, Long> {
+                extends JpaRepository<Reservation, Long> {
 
-    List<Reservation> findByVehicleIdAndStatus(
-            Long vehicleId,
-            ReservationStatus status
-    );
+        List<Reservation> findByVehicleIdAndStatus(
+                        Long vehicleId,
+                        ReservationStatus status);
 
-    List<Reservation> findByCustomerId(Long customerId);
+        List<Reservation> findByCustomerId(Long customerId);
 
-    long countByVehicleIdAndStatus(Long vehicleId, ReservationStatus status);
+        long countByVehicleIdAndStatus(Long vehicleId, ReservationStatus status);
 }

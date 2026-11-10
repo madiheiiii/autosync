@@ -1,4 +1,5 @@
 package com.autosync.model.pessimistic;
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -13,7 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
-@Entity(name  = "PessimisticReservation")
+@Entity(name = "PessimisticReservation")
 @Table(name = "reservation", schema = "pessimistic")
 public class PessimisticReservation {
 
@@ -22,23 +23,24 @@ public class PessimisticReservation {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "customer_id", nullable=false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private PessimisticCustomer customer;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "vehicle_id", nullable = false)
     private PessimisticVehicle vehicle;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PessimisticReservationStatus status;
-    
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public PessimisticReservation(){}
+    public PessimisticReservation() {
+    }
 
-    public PessimisticReservation(PessimisticCustomer customer, PessimisticVehicle vehicle){
+    public PessimisticReservation(PessimisticCustomer customer, PessimisticVehicle vehicle) {
         this.customer = customer;
         this.vehicle = vehicle;
         this.status = PessimisticReservationStatus.ACTIVE;
@@ -55,15 +57,15 @@ public class PessimisticReservation {
         }
     }
 
-    public PessimisticCustomer getCustomer(){
+    public PessimisticCustomer getCustomer() {
         return customer;
     }
 
-    public PessimisticVehicle getVehicle(){
+    public PessimisticVehicle getVehicle() {
         return vehicle;
     }
 
-    public PessimisticReservationStatus getStatus(){
+    public PessimisticReservationStatus getStatus() {
         return status;
     }
 
@@ -71,11 +73,11 @@ public class PessimisticReservation {
         return createdAt;
     }
 
-    public void setCustomer(PessimisticCustomer customer){
+    public void setCustomer(PessimisticCustomer customer) {
         this.customer = customer;
     }
 
-    public void setVehicle(PessimisticVehicle vehicle){
+    public void setVehicle(PessimisticVehicle vehicle) {
         this.vehicle = vehicle;
     }
 
@@ -83,8 +85,8 @@ public class PessimisticReservation {
         this.status = status;
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-    
+
 }

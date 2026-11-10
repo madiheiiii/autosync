@@ -1,5 +1,6 @@
 
 package com.autosync.service.pessimistic;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ import com.autosync.repository.pessimistic.PessimisticVehicleRepository;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 
 @Service
 public class PessimisticReservationService {
@@ -31,6 +31,7 @@ public class PessimisticReservationService {
         this.customerRepository = customerRepository;
         this.vehicleRepository = vehicleRepository;
     }
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -44,10 +45,8 @@ public class PessimisticReservationService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Vehicle not found"));
 
-
-        List<PessimisticReservation> activeReservations =
-                reservationRepository.findByVehicleIdAndStatus(
-                        vehicleId, PessimisticReservationStatus.ACTIVE);
+        List<PessimisticReservation> activeReservations = reservationRepository.findByVehicleIdAndStatus(
+                vehicleId, PessimisticReservationStatus.ACTIVE);
 
         if (!activeReservations.isEmpty()) {
             throw new ResponseStatusException(
@@ -64,6 +63,7 @@ public class PessimisticReservationService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Reservation not found"));
     }
+
     public List<PessimisticReservation> getAllReservations() {
         return reservationRepository.findAll();
     }
@@ -109,9 +109,8 @@ public class PessimisticReservationService {
                         HttpStatus.NOT_FOUND, "Vehicle not found"));
         entityManager.refresh(reservation);
 
-        List<PessimisticReservation> activeReservations =
-                reservationRepository.findByVehicleIdAndStatus(
-                        vehicleId, PessimisticReservationStatus.ACTIVE);
+        List<PessimisticReservation> activeReservations = reservationRepository.findByVehicleIdAndStatus(
+                vehicleId, PessimisticReservationStatus.ACTIVE);
 
         if (!activeReservations.isEmpty()) {
             throw new ResponseStatusException(

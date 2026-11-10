@@ -1,4 +1,5 @@
 package com.autosync.model.optimistic;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
@@ -14,7 +15,7 @@ public class OptimisticCustomer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotBlank
     private String name;
 
@@ -22,30 +23,31 @@ public class OptimisticCustomer {
     @Email
     private String email;
 
-    public OptimisticCustomer(){}
+    public OptimisticCustomer() {
+    }
 
-    public OptimisticCustomer(String name, String email){
+    public OptimisticCustomer(String name, String email) {
         this.name = name;
         this.email = email;
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return name;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public void setEmail(String email){
+    public void setEmail(String email) {
         this.email = email;
     }
 }

@@ -1,4 +1,5 @@
 package com.autosync.model.constraint;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -75,5 +76,3 @@ public class Vehicle {
         this.year = year;
     }
 }
-
-    

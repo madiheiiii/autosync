@@ -33,24 +33,19 @@ public class ReservationService {
         this.customerRepository = customerRepository;
         this.vehicleRepository = vehicleRepository;
     }
+
     private boolean isActiveReservationConflict(Throwable exception) {
-        for (Throwable cause = exception;
-                cause != null;
-                cause = cause.getCause()) {
+        for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
 
             if (cause instanceof SQLException sqlException) {
-                for (SQLException sql = sqlException;
-                        sql != null;
-                        sql = sql.getNextException()) {
+                for (SQLException sql = sqlException; sql != null; sql = sql.getNextException()) {
 
-                    boolean duplicateKey =
-                            sql.getErrorCode() == 2601
+                    boolean duplicateKey = sql.getErrorCode() == 2601
                             || sql.getErrorCode() == 2627;
 
                     String message = sql.getMessage();
 
-                    boolean activeReservationIndex =
-                            message != null
+                    boolean activeReservationIndex = message != null
                             && message.contains(
                                     "'UX_Reservation_OneActivePerVehicle'");
 
@@ -63,6 +58,7 @@ public class ReservationService {
 
         return false;
     }
+
     @Transactional
     public Reservation createReservation(Long customerId, Long vehicleId) {
         Customer customer = customerRepository.findById(customerId)
@@ -73,9 +69,8 @@ public class ReservationService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Vehicle not found"));
 
-        List<Reservation> activeReservations =
-                reservationRepository.findByVehicleIdAndStatus(
-                        vehicleId, ReservationStatus.ACTIVE);
+        List<Reservation> activeReservations = reservationRepository.findByVehicleIdAndStatus(
+                vehicleId, ReservationStatus.ACTIVE);
 
         if (!activeReservations.isEmpty()) {
             throw new ResponseStatusException(
@@ -105,6 +100,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Reservation not found"));
     }
+
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
     }
@@ -131,7 +127,7 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-        public Reservation activeReservation(Long id) {
+    public Reservation activeReservation(Long id) {
         Reservation reservation = getReservationById(id);
 
         if (reservation.getStatus() == ReservationStatus.ACTIVE) {

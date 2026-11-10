@@ -16,7 +16,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity(name = "ConstraintReservation")
-@Table(name="reservation", schema="`constraint`")
+@Table(name = "reservation", schema = "`constraint`")
 public class Reservation {
 
     @Id

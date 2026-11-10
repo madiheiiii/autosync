@@ -1,4 +1,5 @@
 package com.autosync.controller.optimistic;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -21,24 +22,24 @@ public class OptimisticCustomerController {
 
     private final OptimisticCustomerService customerService;
 
-    public OptimisticCustomerController(OptimisticCustomerService customerService){
+    public OptimisticCustomerController(OptimisticCustomerService customerService) {
         this.customerService = customerService;
     }
 
-    @GetMapping 
-    public List<OptimisticCustomer> getAllCustomers(){
+    @GetMapping
+    public List<OptimisticCustomer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping ("/{id}")
-    public OptimisticCustomer getCustomersById(@PathVariable long id){
-        return customerService.getAllCustomers(id) .orElseThrow(() -> new ResponseStatusException
-        (HttpStatus.NOT_FOUND, "Customer not found."));
+    @GetMapping("/{id}")
+    public OptimisticCustomer getCustomersById(@PathVariable long id) {
+        return customerService.getAllCustomers(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found."));
     }
 
     @PostMapping
-    public OptimisticCustomer createCustomer(@Valid @RequestBody OptimisticCustomer customer){
+    public OptimisticCustomer createCustomer(@Valid @RequestBody OptimisticCustomer customer) {
         return customerService.createCustomer(customer);
     }
-    
+
 }

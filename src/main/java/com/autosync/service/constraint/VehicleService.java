@@ -22,11 +22,11 @@ public class VehicleService {
         return vehicleRepository.findAll();
     }
 
-    public Optional<Vehicle> getAllVehicles(Long id){
+    public Optional<Vehicle> getAllVehicles(Long id) {
         return vehicleRepository.findById(id);
     }
 
-    public Vehicle createVehicle(Vehicle vehicle){
+    public Vehicle createVehicle(Vehicle vehicle) {
         return vehicleRepository.save(vehicle);
     }
 }

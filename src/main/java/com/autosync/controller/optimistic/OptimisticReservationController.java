@@ -32,8 +32,8 @@ public class OptimisticReservationController {
 
     public record CreateReservationRequest(
             Long customerId,
-            Long vehicleId
-    ) {}
+            Long vehicleId) {
+    }
 
     @PostMapping
     public OptimisticReservation createReservation(
@@ -47,6 +47,7 @@ public class OptimisticReservationController {
     public OptimisticReservation getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
+
     @GetMapping
     public List<OptimisticReservation> getAllReservations() {
         return reservationService.getAllReservations();
@@ -62,6 +63,7 @@ public class OptimisticReservationController {
     public OptimisticReservation cancelReservation(@PathVariable Long id) {
         return reservationService.cancelReservation(id);
     }
+
     @PatchMapping("/{id}/active")
     public OptimisticReservation activeReservation(@PathVariable Long id) {
         return reservationService.activeReservation(id);
@@ -70,6 +72,7 @@ public class OptimisticReservationController {
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<Map<String, String>> handleOptimisticConflict(OptimisticLockingFailureException exception) {
         System.out.println("OPTIMISTIC CONFLICT: " + exception.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Vehicle status changed during this reservation attempt. Please try again."));
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("message", "Vehicle status changed during this reservation attempt. Please try again."));
     }
 }
