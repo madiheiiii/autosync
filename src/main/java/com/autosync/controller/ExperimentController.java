@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.autosync.dto.ExperimentRequest;
 import com.autosync.dto.ReservationAttemptResult;
 import com.autosync.service.ExperimentService;
+import com.autosync.dto.ExperimentResult;
 
 @RestController
 @RequestMapping("/experiments")
@@ -22,9 +23,10 @@ public class ExperimentController {
     }
 
     @PostMapping
-    public List<ReservationAttemptResult> runExperiment(
+    public ExperimentResult runExperiment(
             @RequestBody ExperimentRequest request) {
 
         return experimentService.runExperiment(request);
     }
+
 }

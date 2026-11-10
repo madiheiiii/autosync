@@ -17,24 +17,38 @@ import com.autosync.dto.ReservationAttemptResult;
 import com.autosync.service.optimistic.OptimisticReservationService;
 import com.autosync.service.pessimistic.PessimisticReservationService;
 import com.autosync.service.constraint.ReservationService;
+import com.autosync.repository.constraint.ReservationRepository;
+import com.autosync.repository.optimistic.OptimisticReservationRepository;
+import com.autosync.repository.pessimistic.PessimisticReservationRepository;
+import com.autosync.dto.ExperimentResult;
+import com.autosync.model.constraint.ReservationStatus;
+import com.autosync.model.optimistic.OptimisticReservationStatus;
+import com.autosync.model.pessimistic.PessimisticReservationStatus;
+import java.util.Locale;
 
 @Service
 public class ExperimentService {
-
+    private final ReservationRepository constraintReservationRepository;
+    private final OptimisticReservationRepository optimisticReservationRepository;
+    private final PessimisticReservationRepository pessimisticReservationRepository;
     private final PessimisticReservationService pessimisticReservationService;
     private final OptimisticReservationService optimisticReservationService;
     private final ReservationService constraintReservationService;
 
     public ExperimentService(PessimisticReservationService pessimisticReservationService, 
-        OptimisticReservationService optimisticReservationService, ReservationService reservationService) {
+        OptimisticReservationService optimisticReservationService, ReservationService reservationService, ReservationRepository constraintReservationRepository,
+        OptimisticReservationRepository optimisticReservationRepository, PessimisticReservationRepository pessimisticReservationRepository) {
         this.pessimisticReservationService = pessimisticReservationService;
         this.optimisticReservationService = optimisticReservationService;
         this.constraintReservationService = reservationService;
+        this.constraintReservationRepository = constraintReservationRepository;
+        this.optimisticReservationRepository = optimisticReservationRepository;
+        this.pessimisticReservationRepository = pessimisticReservationRepository;
     }
 
 
 
-    public List<ReservationAttemptResult> runExperiment(ExperimentRequest request) {
+    public ExperimentResult runExperiment(ExperimentRequest request) {
 
     if (!"pessimistic".equalsIgnoreCase(request.strategy()) && !"optimistic".equalsIgnoreCase(request.strategy()) && !"constraint".equalsIgnoreCase(request.strategy())) {
         throw new ResponseStatusException(
@@ -78,11 +92,36 @@ public class ExperimentService {
                         }, executor))
                         .toList();
 
+        long start = System.nanoTime();
         startSignal.countDown();
 
-        return attempts.stream()
-                .map(CompletableFuture::join)
-                .toList();
+        List<ReservationAttemptResult> results = attempts.stream().map(CompletableFuture::join).toList();
+
+        long totalDurationMs = (System.nanoTime() - start) / 1_000_000;
+        long successCount = results.stream().filter(result -> "SUCCESS".equals(result.outcome())).count();
+        long conflictCount = results.stream().filter(result -> "CONFLICT".equals(result.outcome())).count();
+        long errorCount = results.stream().filter(result -> "ERROR".equals(result.outcome())).count();
+        double averageAttemptDurationMs = results.stream().mapToLong(ReservationAttemptResult::durationMs).average().orElse(0);
+        String strategy = request.strategy().toLowerCase(Locale.ROOT);
+        long activeReservationCount = switch (strategy) {
+            case "constraint" -> constraintReservationRepository.countByVehicleIdAndStatus(request.vehicleId(), ReservationStatus.ACTIVE);
+            case "optimistic" -> optimisticReservationRepository.countByVehicleIdAndStatus(request.vehicleId(), OptimisticReservationStatus.ACTIVE);
+            case "pessimistic" -> pessimisticReservationRepository.countByVehicleIdAndStatus(request.vehicleId(), PessimisticReservationStatus.ACTIVE);
+            default -> throw new IllegalStateException("Unexpected strategy");
+        };
+
+        return new ExperimentResult(
+                strategy,
+                request.vehicleId(),
+                results.size(),
+                successCount,
+                conflictCount,
+                errorCount,
+                totalDurationMs,
+                averageAttemptDurationMs,
+                activeReservationCount,
+                activeReservationCount <= 1,
+                results);
 
     } finally {
         executor.shutdown();
