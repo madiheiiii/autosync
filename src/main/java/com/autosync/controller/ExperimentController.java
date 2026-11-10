@@ -11,15 +11,22 @@ import com.autosync.dto.ExperimentRequest;
 import com.autosync.dto.ReservationAttemptResult;
 import com.autosync.service.ExperimentService;
 import com.autosync.dto.ExperimentResult;
+import com.autosync.dto.ExperimentSetupRequest;
+import com.autosync.service.ExperimentSetupService;
 
 @RestController
 @RequestMapping("/experiments")
 public class ExperimentController {
 
     private final ExperimentService experimentService;
+    private final ExperimentSetupService experimentSetupService;
 
-    public ExperimentController(ExperimentService experimentService) {
+    public ExperimentController(
+            ExperimentService experimentService,
+            ExperimentSetupService experimentSetupService) {
+
         this.experimentService = experimentService;
+        this.experimentSetupService = experimentSetupService;
     }
 
     @PostMapping
@@ -29,4 +36,10 @@ public class ExperimentController {
         return experimentService.runExperiment(request);
     }
 
+    @PostMapping("/setup")
+    public ExperimentRequest setup(
+            @RequestBody ExperimentSetupRequest request) {
+
+        return experimentSetupService.setup(request);
+    }
 }
