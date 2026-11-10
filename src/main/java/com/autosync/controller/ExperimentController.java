@@ -13,6 +13,7 @@ import com.autosync.service.ExperimentService;
 import com.autosync.dto.ExperimentResult;
 import com.autosync.dto.ExperimentSetupRequest;
 import com.autosync.service.ExperimentSetupService;
+import com.autosync.dto.ComparisonRequest;
 
 @RestController
 @RequestMapping("/experiments")
@@ -41,5 +42,29 @@ public class ExperimentController {
             @RequestBody ExperimentSetupRequest request) {
 
         return experimentSetupService.setup(request);
+    }
+
+    @PostMapping("/compare")
+    public List<ExperimentResult> compare(
+            @RequestBody ComparisonRequest request) {
+
+        if (request.customerCount() < 1 || request.customerCount() > 20) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Customer count must be between 1 and 20");
+        }
+
+        List<ExperimentResult> results = new java.util.ArrayList<>();
+
+        for (String strategy : List.of("constraint", "optimistic", "pessimistic")) {
+
+            ExperimentRequest experiment = experimentSetupService.setup(
+                    new ExperimentSetupRequest(
+                            strategy, request.customerCount()));
+
+            results.add(experimentService.runExperiment(experiment));
+        }
+
+        return results;
     }
 }
