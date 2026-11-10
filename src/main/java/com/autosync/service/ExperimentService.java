@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,25 +14,29 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.autosync.dto.ExperimentRequest;
 import com.autosync.dto.ReservationAttemptResult;
+import com.autosync.service.optimistic.OptimisticReservationService;
 import com.autosync.service.pessimistic.PessimisticReservationService;
 
 @Service
 public class ExperimentService {
 
-    private final PessimisticReservationService reservationService;
+    private final PessimisticReservationService pessimisticReservationService;
+    private final OptimisticReservationService optimisticReservationService;
 
-    public ExperimentService(
-            PessimisticReservationService reservationService) {
-        this.reservationService = reservationService;
+    public ExperimentService(PessimisticReservationService pessimisticReservationService, OptimisticReservationService optimisticReservationService) {
+        this.pessimisticReservationService = pessimisticReservationService;
+        this.optimisticReservationService = optimisticReservationService;
     }
+
+
 
     public List<ReservationAttemptResult> runExperiment(
         ExperimentRequest request) {
 
-    if (!"pessimistic".equalsIgnoreCase(request.strategy())) {
+    if (!"pessimistic".equalsIgnoreCase(request.strategy()) && !"optimistic".equalsIgnoreCase(request.strategy())) {
         throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "Only pessimistic experiments are supported for now");
+                "strategy must be pessimistic or optimistic");
     }
 
     if (request.vehicleId() == null
@@ -66,7 +71,7 @@ public class ExperimentService {
                                         "Attempt interrupted before starting");
                             }
 
-                            return runAttempt(customerId, request.vehicleId());
+                            return runAttempt(request.strategy(), customerId, request.vehicleId());
                         }, executor))
                         .toList();
 
@@ -81,17 +86,22 @@ public class ExperimentService {
     }
 }
 
-    public ReservationAttemptResult runAttempt(
-            Long customerId, Long vehicleId) {
-
+    public ReservationAttemptResult runAttempt(String strategy, Long customerId, Long vehicleId) {
         long start = System.nanoTime();
         String outcome;
         String message;
 
         try {
-            reservationService.createReservation(customerId, vehicleId);
+            if ("optimistic".equalsIgnoreCase(strategy)) {
+                optimisticReservationService.createReservation(customerId, vehicleId);
+            } else {
+                pessimisticReservationService.createReservation(customerId, vehicleId);
+            }
             outcome = "SUCCESS";
             message = "Reservation created";
+        } catch (OptimisticLockingFailureException exception) {
+            outcome = "CONFLICT";
+            message = "Vehicle version changed during this reservation attempt";
 
         } catch (PessimisticLockingFailureException exception) {
             outcome = "CONFLICT";

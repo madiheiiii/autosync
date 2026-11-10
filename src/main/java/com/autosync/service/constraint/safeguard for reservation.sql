@@ -220,8 +220,25 @@ VALUES ('TEST-PESS-008', 'Toyota', 'Corolla', 2024, 0);
 SELECT id, customer_id, vehicle_id, status
 FROM pessimistic.reservation
 WHERE vehicle_id = 4;
-*/
+
    BEGIN TRAN;
    SELECT * FROM pessimistic.vehicle WITH (UPDLOCK, ROWLOCK) WHERE id = 8;
    ROLLBACK;
    -- leave this open, don't commit
+   INSERT INTO pessimistic.vehicle (vin, make, model, year)
+OUTPUT INSERTED.id
+VALUES ('TEST-PESS-010', 'Toyota', 'Corolla', 2024);
+*/
+SELECT id, customer_id, vehicle_id, status
+FROM pessimistic.reservation
+WHERE vehicle_id = 11
+AND status = 'ACTIVE';
+/*
+INSERT INTO optimistic.vehicle (vin, make, model, year, version)
+OUTPUT INSERTED.id
+VALUES ('TEST-OPT-EXPERIMENT-001', 'Honda', 'Civic', 2024, 0);
+*/
+SELECT id, customer_id, vehicle_id, status
+FROM optimistic.reservation
+WHERE vehicle_id = 12
+  AND status = 'ACTIVE';
