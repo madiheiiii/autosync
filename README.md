@@ -29,11 +29,11 @@ Next, I'm working on:
 ## Progress
 
 - [x] Backend and Azure SQL integration
-- [x] Vehicle, customer, and reservation APIs
+- [x] Vehicle, customer, and reservation APIs for db contraint, optimistic, and pessimistic schemas
 - [x] Database-level protection against double bookings
 - [x] Handling reservation conflicts
-- [ ] Optimistic locking
-- [ ] Pessimistic locking
+- [x] Optimistic locking
+- [x] Pessimistic locking
 - [ ] Performance testing and comparison
 - [ ] Interactive visualization
 
