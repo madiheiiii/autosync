@@ -1,6 +1,7 @@
 
 package com.autosync.service.constraint;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,7 +33,36 @@ public class ReservationService {
         this.customerRepository = customerRepository;
         this.vehicleRepository = vehicleRepository;
     }
+    private boolean isActiveReservationConflict(Throwable exception) {
+        for (Throwable cause = exception;
+                cause != null;
+                cause = cause.getCause()) {
 
+            if (cause instanceof SQLException sqlException) {
+                for (SQLException sql = sqlException;
+                        sql != null;
+                        sql = sql.getNextException()) {
+
+                    boolean duplicateKey =
+                            sql.getErrorCode() == 2601
+                            || sql.getErrorCode() == 2627;
+
+                    String message = sql.getMessage();
+
+                    boolean activeReservationIndex =
+                            message != null
+                            && message.contains(
+                                    "'UX_Reservation_OneActivePerVehicle'");
+
+                    if (duplicateKey && activeReservationIndex) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
     @Transactional
     public Reservation createReservation(Long customerId, Long vehicleId) {
         Customer customer = customerRepository.findById(customerId)
@@ -57,12 +87,16 @@ public class ReservationService {
 
         try {
             return reservationRepository.saveAndFlush(reservation);
+
         } catch (DataIntegrityViolationException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Vehicle already has an active reservation",
-                    exception
-            );
+            if (isActiveReservationConflict(exception)) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Vehicle already has an active reservation",
+                        exception);
+            }
+
+            throw exception;
         }
     }
 

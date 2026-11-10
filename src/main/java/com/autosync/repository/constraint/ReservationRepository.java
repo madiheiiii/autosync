@@ -17,4 +17,6 @@ public interface ReservationRepository
     );
 
     List<Reservation> findByCustomerId(Long customerId);
+
+    long countByVehicleIdAndStatus(Long vehicleId, ReservationStatus status);
 }

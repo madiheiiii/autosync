@@ -7,5 +7,6 @@ import java.util.List;
 public interface PessimisticReservationRepository extends JpaRepository<PessimisticReservation, Long>{
     List<PessimisticReservation> findByVehicleIdAndStatus(Long vehicleId, PessimisticReservationStatus status);
     List<PessimisticReservation> findByCustomerId(Long customerId);
+    long countByVehicleIdAndStatus(Long vehicleId, PessimisticReservationStatus status);
     
 }

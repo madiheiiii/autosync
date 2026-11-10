@@ -228,17 +228,43 @@ WHERE vehicle_id = 4;
    INSERT INTO pessimistic.vehicle (vin, make, model, year)
 OUTPUT INSERTED.id
 VALUES ('TEST-PESS-010', 'Toyota', 'Corolla', 2024);
-*/
+
 SELECT id, customer_id, vehicle_id, status
 FROM pessimistic.reservation
 WHERE vehicle_id = 11
 AND status = 'ACTIVE';
-/*
+
 INSERT INTO optimistic.vehicle (vin, make, model, year, version)
 OUTPUT INSERTED.id
 VALUES ('TEST-OPT-EXPERIMENT-001', 'Honda', 'Civic', 2024, 0);
-*/
+
 SELECT id, customer_id, vehicle_id, status
 FROM optimistic.reservation
 WHERE vehicle_id = 12
+  AND status = 'ACTIVE';
+
+  SELECT
+    name,
+    filter_definition
+FROM sys.indexes
+WHERE object_id = OBJECT_ID(N'[constraint].[reservation]')
+  AND is_unique = 1;
+
+
+ALTER TABLE [constraint].vehicle 
+ALTER COLUMN vin VARCHAR(30);
+
+  INSERT INTO [constraint].vehicle (vin, make, model, year)
+OUTPUT INSERTED.id
+VALUES ('TEST-CONSTRAINT-001', 'Toyota', 'Corolla', 2024);
+*/
+
+SELECT id, name
+FROM [constraint].customer;
+
+SELECT id
+FROM [constraint].vehicle;
+SELECT id, customer_id, vehicle_id, status
+FROM [constraint].reservation
+WHERE vehicle_id = 6
   AND status = 'ACTIVE';

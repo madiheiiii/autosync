@@ -16,27 +16,30 @@ import com.autosync.dto.ExperimentRequest;
 import com.autosync.dto.ReservationAttemptResult;
 import com.autosync.service.optimistic.OptimisticReservationService;
 import com.autosync.service.pessimistic.PessimisticReservationService;
+import com.autosync.service.constraint.ReservationService;
 
 @Service
 public class ExperimentService {
 
     private final PessimisticReservationService pessimisticReservationService;
     private final OptimisticReservationService optimisticReservationService;
+    private final ReservationService constraintReservationService;
 
-    public ExperimentService(PessimisticReservationService pessimisticReservationService, OptimisticReservationService optimisticReservationService) {
+    public ExperimentService(PessimisticReservationService pessimisticReservationService, 
+        OptimisticReservationService optimisticReservationService, ReservationService reservationService) {
         this.pessimisticReservationService = pessimisticReservationService;
         this.optimisticReservationService = optimisticReservationService;
+        this.constraintReservationService = reservationService;
     }
 
 
 
-    public List<ReservationAttemptResult> runExperiment(
-        ExperimentRequest request) {
+    public List<ReservationAttemptResult> runExperiment(ExperimentRequest request) {
 
-    if (!"pessimistic".equalsIgnoreCase(request.strategy()) && !"optimistic".equalsIgnoreCase(request.strategy())) {
+    if (!"pessimistic".equalsIgnoreCase(request.strategy()) && !"optimistic".equalsIgnoreCase(request.strategy()) && !"constraint".equalsIgnoreCase(request.strategy())) {
         throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "strategy must be pessimistic or optimistic");
+                "strategy must be pessimistic, optimistic, or constraint");
     }
 
     if (request.vehicleId() == null
@@ -92,10 +95,18 @@ public class ExperimentService {
         String message;
 
         try {
-            if ("optimistic".equalsIgnoreCase(strategy)) {
-                optimisticReservationService.createReservation(customerId, vehicleId);
-            } else {
-                pessimisticReservationService.createReservation(customerId, vehicleId);
+            switch (strategy.toLowerCase(java.util.Locale.ROOT)) {
+                case "optimistic" ->
+                        optimisticReservationService.createReservation(customerId, vehicleId);
+
+                case "pessimistic" ->
+                        pessimisticReservationService.createReservation(customerId, vehicleId);
+
+                case "constraint" ->
+                        constraintReservationService.createReservation(customerId, vehicleId);
+
+                default ->
+                        throw new IllegalArgumentException("Unknown strategy: " + strategy);
             }
             outcome = "SUCCESS";
             message = "Reservation created";
@@ -114,6 +125,7 @@ public class ExperimentService {
             message = exception.getReason();
 
         } catch (Exception exception) {
+            exception.printStackTrace();
             outcome = "ERROR";
             message = exception.getClass().getSimpleName();
         }

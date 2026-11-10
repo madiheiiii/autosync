@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity(name = "ConstraintCustomer")
-@Table(name = "customer", schema = "constraint")
+@Table(name = "customer", schema = "`constraint`")
 public class Customer {
 
     @Id

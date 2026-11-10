@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity(name = "ConstraintVehicle")
-@Table(name = "vehicle", schema = "constraint")
+@Table(name = "vehicle", schema = "`constraint`")
 public class Vehicle {
 
     @Id
